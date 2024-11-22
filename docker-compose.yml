@@ -1,0 +1,50 @@
+version: '3.9'
+
+services:
+  composer:
+    image: composer
+    command: update
+    volumes:
+      - "./cleanfox-wordpress:/app"
+
+  mysql:
+    image: mysql:5.7
+    restart: always
+    ports:
+      - 3306:3306
+    volumes:
+      -  "./mysql:/var/lib/mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: cleaning
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    depends_on:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    restart: always
+    ports:
+      - 8183:80
+
+  wordpress:
+    depends_on:
+      - mysql
+      - composer
+    image: wordpress:latest
+    ports:
+      - "8000:80"
+    restart: always
+    read_only: false
+    environment:
+      WORDPRESS_DB_HOST: mysql:3306
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: cleaning
+    volumes:
+      - "./cleanfox-wordpress:/var/www/html"
