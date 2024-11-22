@@ -1,0 +1,7 @@
+!composer*
+
+# Plugins
+/cleanfox-wordpress
+/cleanfox-frontend
+/frontend
+/wordpress

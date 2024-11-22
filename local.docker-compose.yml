@@ -1,0 +1,32 @@
+version: '3.9'
+services:
+  mysql:
+    image: mysql:5.7
+    restart: always
+    ports:
+      - 3306:3306
+    volumes:
+      - "./.srv/database:/var/lib/mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: wordpress
+      MYSQL_DATABASE: cleaning
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin_db
+
+  wordpress:
+    image: wordpress:latest
+    depends_on:
+      - mysql
+    links:
+      - mysql
+    ports:
+      - 8000:80
+    restart: always
+    environment:
+      WORDPRES_DB_HOST: mysql:3306
+      WORDPRES_DB_USER: admin
+      WORDPRES_DB_PASSWORD: admin_wordpress
+      WORDPRES_DB_NAME: cleaning
+      WORDPRES_DEBUG: 1
+    volumes:
+      - "./.srv/wordpress/:/var/www/html"  
